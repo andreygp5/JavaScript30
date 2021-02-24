@@ -1,22 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Type Ahead 👀</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Type Ahead 👀</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <form class="search-form">
+      <input type="text" class="search" placeholder="City or State" />
+      <ul class="suggestions">
+        <li>Filter for a city</li>
+        <li>or a state</li>
+      </ul>
+    </form>
 
-  <form class="search-form">
-    <input type="text" class="search" placeholder="City or State">
-    <ul class="suggestions">
-      <li>Filter for a city</li>
-      <li>or a state</li>
-    </ul>
-  </form>
-<script>
-const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+    <script>
+      const endpoint =
+        "https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json";
+      let places = [];
+      let prom = fetch(endpoint)
+        .then((resp) => resp.json())
+        .then((resp) => {
+          places = resp;
+        });
 
-</script>
-</body>
+      let placeInput = document.querySelector(".search");
+      let suggestions = document.querySelector(".suggestions");
+      placeInput.addEventListener("input", () => {
+        suggestions.innerHTML = "";
+
+        let filteredPlaces = places.filter(
+          (placeObj) =>
+            placeObj.city.toUpperCase().includes(placeInput.value.toUpperCase()) ||
+            placeObj.state.toUpperCase().includes(placeInput.value.toUpperCase())
+        );
+
+        let lis = [];
+        filteredPlaces.forEach((place) => {
+          let city = place.city;
+          let state = place.state;
+          if (placeInput.value != "") {
+            city = highlightText(city, placeInput.value.toUpperCase());
+            state = highlightText(state, placeInput.value.toUpperCase());
+          }
+
+          let li = document.createElement("li");
+          li.append(
+            createSpan(city + ", " + state),
+            createSpan(formatNumber(place.population), "population")
+          );
+
+          lis.push(li);
+        });
+
+        suggestions.append(...lis);
+      });
+      function highlightText(text, partToHighlight) {
+        let partLen = partToHighlight.length;
+
+        let startIndexOfPart = text.toUpperCase().indexOf(partToHighlight);
+        while (startIndexOfPart != -1) {
+          let span = createSpan(text.substring(startIndexOfPart, startIndexOfPart + partLen), "hl");
+          text =
+            text.substring(0, startIndexOfPart) +
+            span.outerHTML +
+            text.substring(startIndexOfPart + partLen);
+          startIndexOfPart = text
+            .toUpperCase()
+            .indexOf(partToHighlight, startIndexOfPart + span.outerHTML.length);
+        }
+        return text;
+      }
+      function createSpan(text, className) {
+        let span = document.createElement("span");
+        span.className = className;
+        span.innerHTML = text;
+        return span;
+      }
+      function formatNumber(number) {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      }
+    </script>
+  </body>
 </html>
