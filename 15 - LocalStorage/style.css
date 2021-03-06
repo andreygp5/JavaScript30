@@ -75,7 +75,7 @@ h2 {
   margin-bottom: 20px;
 }
 
-.add-items input {
+.control-btn {
   padding: 10px;
   outline: 0;
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -83,8 +83,7 @@ h2 {
 .clear-list {
   padding: 0.4rem;
 }
-.check-form {
-  padding-top: 1rem;
+.secondary-controls {
   display: flex;
   justify-content: space-evenly;
 }
