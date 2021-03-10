@@ -58,11 +58,12 @@ function skipVideo() {
 }
 function changeProgress(e) {
   let progressBarCoords = progress.getBoundingClientRect();
+  console.log(progressBarCoords);
   let offsetX;
   if (e.clientX <= progressBarCoords.left) {
     offsetX = 0;
   } else if (e.clientX >= progressBarCoords.right) {
-    offsetX = 640;
+    offsetX = progressBarCoords.width;
   } else {
     offsetX = e.clientX - progressBarCoords.left;
   }
