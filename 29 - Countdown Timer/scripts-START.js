@@ -13,8 +13,9 @@ customForm.addEventListener("submit", startTimer);
 timerNode.addEventListener("timerend", alertAboutEnd);
 
 class Timer {
-  constructor(seconds) {
+  constructor(seconds, endTime) {
     this.seconds = seconds;
+    this.endTime = endTime.getTime();
     this.isRunning = false;
   }
   run() {
@@ -43,7 +44,7 @@ class Timer {
     displayTimeLeft.textContent = `${minLeft}:${secLeft}`;
     document.title = `${minLeft}:${secLeft}`;
 
-    this.seconds--;
+    this.seconds = Math.round((this.endTime - Date.now()) / 1000);
   }
 }
 
@@ -61,7 +62,7 @@ function startTimer(e) {
   endTime.setSeconds(endTime.getSeconds() + seconds);
   displayEndTime.textContent = `Be back at ${endTime.getHours()}:${endTime.getMinutes()}`;
 
-  timer = new Timer(seconds);
+  timer = new Timer(seconds, endTime);
   timer.run();
 }
 function alertAboutEnd() {
